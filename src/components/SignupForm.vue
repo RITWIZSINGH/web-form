@@ -1,9 +1,10 @@
 <template>
-  <form>
+  <form @submit.prevent="handleSubmit">
     <label>Email:</label>
     <input type="email" required v-model="email" />
     <label>Password:</label>
     <input type="password" required v-model="password" />
+    <div v-if="passwordError" class="error">{{ passwordError }}</div>
     <label>Role:</label>
     <select v-model="role">
       <option value="developer">Web Developer</option>
@@ -18,6 +19,10 @@
     <div class="terms">
       <input type="checkbox" required v-model="terms" />
       <label>I agree to the terms and conditions</label>
+    </div>
+
+    <div class="submit">
+      <button>Create an account</button>
     </div>
   </form>
   <p>Email: {{ email }}</p>
@@ -36,11 +41,13 @@ export default {
       terms: false,
       tempSkill: "",
       skills: [],
+      passwordError: "",
     };
   },
   methods: {
-    addSkill() {
-      if (this.tempSkill.endsWith(",")) {
+    addSkill(e) {
+      console.log(e);
+      if (this.tempSkill.endsWith(" ")) {
         const skill = this.tempSkill.slice(0, -1).trim();
         if (skill && !this.skills.includes(skill)) {
           this.skills.push(skill);
@@ -51,6 +58,18 @@ export default {
     removeSkill(skill) {
       this.skills = this.skills.filter((s) => s !== skill);
     },
+    handleSubmit(){
+      this.passwordError = this.password.length > 5 ? '' : 'Password must be at least 6 characters long.';
+      if (!this.passwordError) {
+        console.log("Form submitted", {
+          email: this.email,
+          password: this.password,
+          role: this.role,
+          skills: this.skills,
+          terms: this.terms,
+        });
+      };
+    }
   },
 };
 </script>
@@ -100,6 +119,23 @@ input[type="checkbox"] {
   font-size: 12px;
   letter-spacing: 1px;
   cursor: pointer;
+  font-weight: bold;
+}
+button{
+  background: #0b6dff;
+  border: 0;
+  padding: 10px 20px;
+  color: white;
+  margin-top: 20px;
+  border-radius: 20px;
+}
+.submit{
+  text-align: center;
+}
+.error {
+  color: #ff0062;
+  margin-top: 10px;
+  font-size: 0.8em;
   font-weight: bold;
 }
 </style>
